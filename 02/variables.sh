@@ -1,0 +1,20 @@
+#!/bin/bash
+
+IFS=$'\n'
+listOfVariables=("HOSTNAME = $(hostname)")
+listOfVariables+=("TIMEZONE = $(timedatectl | awk '/Time zone/{print $3 " " $4 $5}'| tr -d '()')")
+listOfVariables+=("USER = $(whoami)")
+listOfVariables+=("OS = $(lsb_release -d | awk '{print $2 " " $3 " " $4}')")
+listOfVariables+=("DATE = $(date +"%d %b %Y %T")")
+listOfVariables+=("UPTIME = $(uptime -p | awk '{for(i = 2; i <= NF; i++) printf "%s ", $i}')")
+listOfVariables+=("UPTIME_SEC = $(awk '{print $1}' /proc/uptime)")
+ip=$(hostname -I | awk '{print $1}')
+listOfVariables+=("IP = $ip")
+listOfVariables+=("MASK = $(ifconfig | grep "$ip" | awk '{print $4}')")
+listOfVariables+=("GATEWAY = $(ip route | awk '/default/{print $3}')")
+listOfVariables+=("RAM_TOTAL = $(free | awk 'NR==2 {printf "%.3f GB\n", $2/1024/1024}')")
+listOfVariables+=("RAM_USED = $(free | awk 'NR==2 {printf "%.3f GB\n", $3/1024/1024}')")
+listOfVariables+=("RAM_FREE = $(free | awk 'NR==2 {printf "%.3f GB\n", $4/1024/1024}')")
+listOfVariables+=("SPACE_ROOT = $(df | awk 'NR==3 {printf "%.2f MB", $2/1024}')")
+listOfVariables+=("SPACE_ROOT_USED = $(df | awk 'NR==3 {printf "%.2f MB", $3/1024}')")
+listOfVariables+=("SPACE_ROOT_FREE = $(df | awk 'NR==3 {printf "%.2f MB", $4/1024}')")
